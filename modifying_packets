@@ -4,6 +4,7 @@ import netfilterqueue
 
 def process_packet(packet):
     print(packet)
+    packet.accept()  #to forward the packets
 
 queue = netfilterqueue.NetfilterQueue()  #creating an instance of queue
 queue.bind(0,process_packet)  #binding the queue and call back function
