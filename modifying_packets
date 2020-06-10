@@ -5,7 +5,8 @@ import scapy.all as scapy
 
 def process_packet(packet):
     scapy_packet = scapy.IP(packet.get_payload())   #converting into scapy packet
-    print(scapy_packet)
+    if scapy_packet.haslayer(scapy.DNSRR):   #checking for DNS response layer
+       print(scapy_packet)
     packet.accept()  #to forward the packets
 
 queue = netfilterqueue.NetfilterQueue()  #creating an instance of queue
