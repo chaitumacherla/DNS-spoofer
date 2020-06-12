@@ -13,6 +13,8 @@ def process_packet(packet):
           scapy_packet[scapy.DNS].an
           scapy_packet[scapy.DNS].ancount=1
 
+          packet.set_payload(str(scapy_packet))
+
     packet.accept()  #to forward the packets
 
 queue = netfilterqueue.NetfilterQueue()  #creating an instance of queue
