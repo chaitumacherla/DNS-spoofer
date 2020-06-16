@@ -1,4 +1,4 @@
-#!usr/bin/env pyhton
+#!usr/bin/env python
 
 # Here we are intercepting the downloads that are made by the target client and replacing it with new file.
 
