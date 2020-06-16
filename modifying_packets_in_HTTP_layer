@@ -1,0 +1,25 @@
+#!usr/bin/env pyhton
+
+# Here we are intercepting the downloads that are made by the target client and replacing it with new file.
+
+import netfilterqueue
+import scapy.all as scapy
+
+def process_packet(packet):
+    scapy_packet = scapy.IP(packet.get_payload())   #converting into scapy packet
+    if scapy_packet.haslayer(scapy.Raw):   #checking for HTTP layer
+
+       if scapy_packet[scapy.TCP].dport == 80:  #HTTP requests
+          print("HTTP requests")
+          print("scapy_packet.show()")
+
+       elif scapy_packet[scapy.TCP].sport == 80:   #HTTP responses
+            print("HTTP responses")
+            print(scapy_packet.show())
+
+
+    packet.accept()  #to forward the packets
+
+queue = netfilterqueue.NetfilterQueue()  #creating an instance of queue
+queue.bind(0,process_packet)  #binding the queue and call back function
+queue.run()
