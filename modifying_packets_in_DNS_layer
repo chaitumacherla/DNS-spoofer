@@ -1,5 +1,7 @@
 #!usr/bin/env python
 
+#Here we are dns spoofing the target and redirecting them to our own webserver when they try to access bing.com
+
 import netfilterqueue
 import scapy.all as scapy
 
