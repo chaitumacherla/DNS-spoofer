@@ -20,6 +20,7 @@ def process_packet(packet):
 
        elif scapy_packet[scapy.TCP].sport == 80:   #HTTP responses
             if scapy_packet[scapy.TCP].seq in ack_list:
+               ack_list.remove(scapy_packet[scapy.TCP].seq)
                print("[+]Replacing File")
                print(scapy_packet.show())
 
