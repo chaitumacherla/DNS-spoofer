@@ -10,9 +10,9 @@ ack_list=[]
 def set_load(packet,load):
 
     packet[scapy.Raw].load=load
-    del scapy_packet[scapy.Ip].len
-    del scapy_packet[scapy.Ip].chksum
-    del scapy_packey[scapy.TCP].chksum
+    del packet[scapy.Ip].len
+    del packet[scapy.Ip].chksum
+    del packey[scapy.TCP].chksum
     
     return packet
 
