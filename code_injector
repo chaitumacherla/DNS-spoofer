@@ -1,0 +1,37 @@
+#!usr/bin/env python
+
+#Here we are trying to capture the data from the target client and tries to inject the code. 
+
+import netfilterqueue
+import scapy.all as scapy
+
+ 
+
+def set_load(packet,load):
+
+    packet[scapy.Raw].load=load
+    del packet[scapy.Ip].len
+    del packet[scapy.Ip].chksum
+    del packey[scapy.TCP].chksum
+    
+    return packet
+
+
+def process_packet(packet):
+    scapy_packet = scapy.IP(packet.get_payload())   #converting into scapy packet
+    if scapy_packet.haslayer(scapy.Raw):   #checking for HTTP layer
+
+       if scapy_packet[scapy.TCP].dport == 80:  #HTTP requests
+          
+          print("[+]requests")
+          print(scapy_packet.show())
+
+       elif scapy_packet[scapy.TCP].sport == 80:   #HTTP responses
+          print("[+]responses")
+          print(scapy_packet.show())
+
+    packet.accept()  #to forward the packets
+
+queue = netfilterqueue.NetfilterQueue()  #creating an instance of queue
+queue.bind(0,process_packet)  #binding the queue and call back function
+queue.run()
